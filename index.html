@@ -324,82 +324,133 @@
 
     /* ========= CAJA DE LUZ ========= */
 
-    let unidad = "m";
-    let precio = 600;
+let unidad = "m";
+let precio = 600;
 
-    const anchoInput = document.getElementById("ancho");
-    const altoInput = document.getElementById("alto");
-    const resultadoCaja = document.getElementById("resultadoCaja");
+const anchoInput = document.getElementById("ancho");
+const altoInput = document.getElementById("alto");
+const resultadoCaja = document.getElementById("resultadoCaja");
 
-    /* Toggle unidades */
+/* ========= TOGGLE UNIDADES ========= */
 
-    document.querySelectorAll(".unidad-btn").forEach(btn=>{
+document.querySelectorAll(".unidad-btn").forEach(btn=>{
 
-        btn.addEventListener("click", ()=>{
+    btn.addEventListener("click", ()=>{
 
-            document.querySelectorAll(".unidad-btn").forEach(b=>{
-                b.classList.remove("active");
-            });
+        const nuevaUnidad = btn.dataset.unidad;
 
-            btn.classList.add("active");
+        // Si cambia de unidad
+        if(nuevaUnidad !== unidad){
 
-            unidad = btn.dataset.unidad;
+            let ancho = parseFloat(anchoInput.value);
+            let alto = parseFloat(altoInput.value);
 
-            calcularCaja();
+            // Convertir valores existentes
+            if(!isNaN(ancho)){
+
+                // m -> cm
+                if(unidad === "m" && nuevaUnidad === "cm"){
+                    ancho = ancho * 100;
+                }
+
+                // cm -> m
+                else if(unidad === "cm" && nuevaUnidad === "m"){
+                    ancho = ancho / 100;
+                }
+
+                anchoInput.value = parseFloat(ancho.toFixed(2));
+            }
+
+            if(!isNaN(alto)){
+
+                // m -> cm
+                if(unidad === "m" && nuevaUnidad === "cm"){
+                    alto = alto * 100;
+                }
+
+                // cm -> m
+                else if(unidad === "cm" && nuevaUnidad === "m"){
+                    alto = alto / 100;
+                }
+
+                altoInput.value = parseFloat(alto.toFixed(2));
+            }
+
+            // Actualizar unidad actual
+            unidad = nuevaUnidad;
+        }
+
+        // UI botones
+        document.querySelectorAll(".unidad-btn").forEach(b=>{
+            b.classList.remove("active");
         });
+
+        btn.classList.add("active");
+
+        calcularCaja();
 
     });
 
-    /* Toggle lados */
+});
 
-    document.querySelectorAll(".lado-btn").forEach(btn=>{
+/* ========= TOGGLE LADOS ========= */
 
-        btn.addEventListener("click", ()=>{
+document.querySelectorAll(".lado-btn").forEach(btn=>{
 
-            document.querySelectorAll(".lado-btn").forEach(b=>{
-                b.classList.remove("active");
-            });
+    btn.addEventListener("click", ()=>{
 
-            btn.classList.add("active");
-
-            precio = parseFloat(btn.dataset.valor);
-
-            calcularCaja();
+        document.querySelectorAll(".lado-btn").forEach(b=>{
+            b.classList.remove("active");
         });
+
+        btn.classList.add("active");
+
+        precio = parseFloat(btn.dataset.valor);
+
+        calcularCaja();
 
     });
 
-    anchoInput.addEventListener("input", calcularCaja);
-    altoInput.addEventListener("input", calcularCaja);
+});
 
-    function calcularCaja(){
+/* ========= EVENTOS ========= */
 
-        let ancho = parseFloat(anchoInput.value);
-        let alto = parseFloat(altoInput.value);
+anchoInput.addEventListener("input", calcularCaja);
+altoInput.addEventListener("input", calcularCaja);
 
-        if(isNaN(ancho) || isNaN(alto)){
+/* ========= FUNCION ========= */
 
-            resultadoCaja.innerHTML = "Ingresa medidas";
-            return;
-        }
+function calcularCaja(){
 
-        /* Convertir cm a metros */
-        if(unidad === "cm"){
+    let ancho = parseFloat(anchoInput.value);
+    let alto = parseFloat(altoInput.value);
 
-            ancho = ancho / 100;
-            alto = alto / 100;
+    if(isNaN(ancho) || isNaN(alto)){
 
-        }
-
-        const metros2 = ancho * alto;
-        const total = metros2 * precio;
-
-        resultadoCaja.innerHTML = `
-            📐 Área: ${metros2.toFixed(2)} m²
-            <br><br>
-            💰 Total: S/ ${total.toFixed(2)}
-        `;
+        resultadoCaja.innerHTML = "Ingresa medidas";
+        return;
     }
+
+    // Convertir siempre a metros
+    let anchoMetros = ancho;
+    let altoMetros = alto;
+
+    if(unidad === "cm"){
+
+        anchoMetros = ancho / 100;
+        altoMetros = alto / 100;
+
+    }
+
+    const metros2 = anchoMetros * altoMetros;
+    const total = metros2 * precio;
+
+    resultadoCaja.innerHTML = `
+        📐 Área: ${metros2.toFixed(2)} m²
+        <br><br>
+        💰 Total: S/ ${total.toFixed(2)}
+    `;
+}
 
 </script>
 
